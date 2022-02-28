@@ -57,17 +57,33 @@ router.get('/:id', async (req, res, next) => {
             })
         });
 });
-
+// copy GET :id route, edit SQL och response
 router.get('/:id/delete', async (req, res, next) => {
     const id = req.params.id;
-    res.json(`deleting task ${id}`);
-    // if (isNaN(req.params.id)) {
-    //     res.status(400).json({
-    //         task: {
-    //             error: 'Bad request'
-    //         }
-    //     });
-    // }
+    if (isNaN(req.params.id)) {
+        return res.status(400).json({
+            task: {
+                error: 'Bad request'
+            }
+        });
+    }
+    await pool.promise()
+        .query('DELETE FROM tasks WHERE id = ?', [id])
+        .then((response) => {
+            if (response[0].affectedRows === 1) {
+                res.redirect('/tasks');
+            } else {
+                res.status(400).redirect('/tasks');
+            }
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({
+                task: {
+                    error: 'Error getting tasks'
+                }
+            })
+        });
 });
 
 router.post('/', async (req, res, next) => {
@@ -85,7 +101,6 @@ router.post('/', async (req, res, next) => {
     await pool.promise()
     .query('INSERT INTO tasks (task) VALUES (?)', [task])
     .then((response) => {
-        console.log(response[0].affectedRows);
         if (response[0].affectedRows === 1) {
             res.redirect('/tasks');
         } else {
