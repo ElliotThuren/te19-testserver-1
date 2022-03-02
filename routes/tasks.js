@@ -10,11 +10,15 @@ const pool = require('../database');
     DELETE /:id - Delete a task by id
 */
 router.get('/', async (req, res, next) => {
-
-    await pool.promise()
+const flash = req.session.flash;
+console.log(flash);
+req.session.flash = null;
+    await pool
+        .promise()
         .query('SELECT * FROM tasks ORDER BY updated_at DESC')
         .then(([rows, fields]) => {
               res.render('tasks.njk', {
+                flash: flash,
                 tasks: rows,
                 title: 'Tasks',
                 layout: 'layout.njk'
@@ -71,8 +75,10 @@ router.get('/:id/delete', async (req, res, next) => {
         .query('DELETE FROM tasks WHERE id = ?', [id])
         .then((response) => {
             if (response[0].affectedRows === 1) {
+                req.session.flash = 'Task deleted'
                 res.redirect('/tasks');
             } else {
+                req.session.flash = 'Task not found'
                 res.status(400).redirect('/tasks');
             }
         })
@@ -102,6 +108,7 @@ router.post('/', async (req, res, next) => {
     .query('INSERT INTO tasks (task) VALUES (?)', [task])
     .then((response) => {
         if (response[0].affectedRows === 1) {
+            req.session.flash = 'Successfully added task';
             res.redirect('/tasks');
         } else {
             res.status(400).json({

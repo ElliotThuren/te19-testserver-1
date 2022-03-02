@@ -1,0 +1,14 @@
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+  {% if flash %}
+  <div id="liveToast" class="toast fade show" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header">
+      <strong class="me-auto">{{ flash }}</strong>
+      <small>1 min ago</small>
+      <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body">
+      Task was successfully altered with.
+    </div>
+  </div>
+  {%endif%}
+</div>
