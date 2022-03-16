@@ -27,15 +27,15 @@ app.use(cookieParser());
 app.use(sassMiddleware({
   src: path.join(__dirname, 'public'),
   dest: path.join(__dirname, 'public'),
-  indentedSyntax: false, // true = .sass and false = .scss
+  indentedSyntax: false,
   sourceMap: true
 }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
-  secret: 'sup3rHemli5',
-  resave: false,
-  saveUninitialized: true,
-  cookie: { sameSite: true }
+    secret: 'sup3rHemli5',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { sameSite: true }
 }));
 
 app.use('/', indexRouter);
